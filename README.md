@@ -1,5 +1,5 @@
 # WatsonX_Assistant_with_Milvus
-Como construir um WatsonX Assistant que utilize Watsonx.ai com Milvus Vector Database.
+Como construir um WatsonX Assistant que utilize NeuralSeek com Milvus Vector Database.
 Esse é um guia ppara poder utilizar o tutorial abaixo, tive várias dificuldades então estou anotando aqui tudo o que fiz para conseguir segui-lo.
 
 Siga o tutorial:
