@@ -18,13 +18,14 @@ SOURCES_TOPIC = "Conteúdos Machine Learning"
 INDEX_NAME = "ML_Collection"
 EMBEDDING_DIM = 768 
 
-#Chunk
+# Chunk - parâmetros para a divisão do texto em chunks
 CHUNK_SIZE = 250
 CHUNK_OVERLAP = 20
 
 # Definições para se conectar ao milvus (ruslan)
 MILVUS_HOST = os.environ.get("REMOTE_SERVER", '127.0.0.1')
 MILVUS_PORT = os.environ.get("MILVUS_PORT", "19530")
+MILVUS_CONNECTION={"host": MILVUS_HOST, "port": MILVUS_PORT}
 # Conecção com o milvus
 #connections.connect(host=MILVUS_HOST, port=MILVUS_PORT)
 
@@ -34,7 +35,7 @@ MILVUS_PORT = os.environ.get("MILVUS_PORT", "19530")
 #project_id = os.environ.get("PROJECT_ID")
 
 
-# Iniciar o logger
+# Iniciar o logger - informações e erros
 logger = logging.getLogger(__name__)
 formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
 handler = logging.StreamHandler()
@@ -43,7 +44,7 @@ handler.setFormatter(formatter)
 logger.addHandler(handler)
 logger.info("Logger initialized")
 
-
+# Cria uma coleção e define o index de tal 
 def create_milvus_collection(collection_name, dim):
     if utility.has_collection(collection_name):
         utility.drop_collection(collection_name)
@@ -67,6 +68,7 @@ def create_milvus_collection(collection_name, dim):
     logger.info(f"Created collection: {collection_name}")
     return collection
 
+# Conexão ao WatsonX LLM e devolve uma instancia do modelo do WatonX
 def connect_watsonx():
     API_KEY = os.environ.get("WATSONX_APIKEY")
     PROJECT_ID = os.environ.get("PROJECT_ID")
@@ -83,9 +85,10 @@ def connect_watsonx():
     
     return model
 
+# Conecta ao Milvos e devolve uma instancia do milvus 
 def connect(connection_info):
     index = Milvus(
-        embedding_function=embed_text,  # Esta função será definida mais adiante
+        embedding_function=embed_text,  
         connection_args=connection_info,
         collection_name=INDEX_NAME,
         index_params="text"
