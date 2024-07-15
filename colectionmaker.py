@@ -87,13 +87,19 @@ def connect_watsonx():
 
 # Conecta ao Milvos e devolve uma instancia do milvus 
 def connect(connection_info):
+    print(f"Connecting to Milvus with connection info: {connection_info}")
     index = Milvus(
         embedding_function=embed_text,  
         connection_args=connection_info,
         collection_name=INDEX_NAME,
         index_params="text"
-    )
+       )
     return index
+
+def _extract_fields(self):
+    print(f"Fields before extraction: {self.fields}")
+    print(f"Primary field: {self._primary_field}")
+    self.fields.remove(self._primary_field)
 
 #Lê os pdfs e extrai o texto, coleta os metadados de cada doc
 def load_docs_pdf(filenames, urls, titles):
