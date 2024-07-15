@@ -95,7 +95,7 @@ def connect(connection_info):
     )
     return index
 
-
+#Lê os pdfs e extrai o texto, coleta os metadados de cada doc
 def load_docs_pdf(filenames, urls, titles):
     texts = []
     metadata = []
@@ -117,11 +117,13 @@ def load_docs_pdf(filenames, urls, titles):
                 metadata.append({'url': url, 'title': title})
     return texts, metadata
 
+# Gera embeddings com o modelo do watsonX pra cada texto
 def embed_text(text):
     model = connect_watsonx()
     embedding = model.generate_embeddings(text)
     return embedding
 
+# Carrega, divide e indexa os documentos na coleção
 def index(connection_info, filenames, urls, titles):
     texts, metadata = load_docs_pdf(filenames, urls, titles)
     text_splitter = RecursiveCharacterTextSplitter(chunk_size=CHUNK_SIZE, chunk_overlap=CHUNK_OVERLAP)
@@ -135,7 +137,8 @@ INDEXED = True
 if __name__ == "__main__":
     logger.setLevel(logging.INFO)
     connections.connect(host=MILVUS_HOST, port=MILVUS_PORT)
-    
+
+    #cria a coleção se não tiver sido criada
     if not utility.has_collection(INDEX_NAME):
         logging.info(f"Creating collection {INDEX_NAME}")
         create_milvus_collection(INDEX_NAME, dim=768)  
