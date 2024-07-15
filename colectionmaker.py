@@ -1,11 +1,6 @@
 import time
 import numpy as np
-from pymilvus import (
-    connections,
-    utility,
-    FieldSchema, CollectionSchema, DataType,
-    Collection,
-)
+from pymilvus import connections, FieldSchema, CollectionSchema, DataType, Collection, utility
 import os
 import PyPDF2
 import logging
@@ -129,6 +124,12 @@ INDEXED = True
 
 if __name__ == "__main__":
     logger.setLevel(logging.INFO)
+    connections.connect(host=MILVUS_CONNECTION['host'], port=MILVUS_CONNECTION['port'])
+    
+    if not utility.has_collection(INDEX_NAME):
+        logging.info(f"Creating collection {INDEX_NAME}")
+        create_milvus_collection(INDEX_NAME, dim=768)  # Ajuste o 'dim' conforme necessário
+    
     if INDEXED:
         logging.info(f"Connecting to {MILVUS_CONNECTION}")
         index = connect(MILVUS_CONNECTION)
@@ -137,7 +138,6 @@ if __name__ == "__main__":
         index = index(MILVUS_CONNECTION, SOURCE_FILE_NAMES, SOURCE_URLS, SOURCE_TITLES)
     
     print(index)
-    query = "What is Data Mining?"
+    query = "What is the interest rate for Lendyr Preferred?"
     results = index.similarity_search(query)
     print(results)
-
