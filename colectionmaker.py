@@ -135,7 +135,7 @@ if __name__ == "__main__":
     
     if not utility.has_collection(INDEX_NAME):
         logging.info(f"Creating collection {INDEX_NAME}")
-        create_milvus_collection(INDEX_NAME, dim=768)  # Ajuste o 'dim' conforme necessário
+        create_milvus_collection(INDEX_NAME, dim=768)  
     
     if INDEXED:
         logging.info(f"Connecting to {MILVUS_CONNECTION}")
