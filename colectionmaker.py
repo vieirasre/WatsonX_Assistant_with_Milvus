@@ -10,7 +10,7 @@ from langchain.vectorstores import Milvus
 from langchain.text_splitter import RecursiveCharacterTextSplitter
 
 # Informações dos arquivos para inserir na coleção (mdswift)
-SOURCE_FILE_NAMES = ["Apostila ML.pdf", "Artigo ML.pdf"]
+SOURCE_FILE_NAMES = ["Apostila_ML.pdf", "Artigo_ML.pdf"]
 SOURCE_URLS = ["https://petmecanica.ufes.br/sites/petengenhariamecanica.ufes.br/files/field/anexo/apostila_do_minicurso_de_machine_learning.pdf", 
                "https://dspace.uevora.pt/rdpc/bitstream/10174/30174/1/apra_techReport_paper01_2018-11_v02.pdf"]
 SOURCE_TITLES = ["Apostila Machine Learning UFES", "Artigo Machine Learning UE"]
