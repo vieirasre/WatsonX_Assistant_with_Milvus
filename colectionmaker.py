@@ -145,6 +145,6 @@ if __name__ == "__main__":
         index = index(MILVUS_CONNECTION, SOURCE_FILE_NAMES, SOURCE_URLS, SOURCE_TITLES)
     
     print(index)
-    query = "What is the interest rate for Lendyr Preferred?"
+    query = "What is Data Mining?"
     results = index.similarity_search(query)
     print(results)
