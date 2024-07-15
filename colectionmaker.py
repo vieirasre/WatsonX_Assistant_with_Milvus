@@ -9,19 +9,29 @@ from ibm_watson_machine_learning.foundation_models import Model
 from langchain.vectorstores import Milvus
 from langchain.text_splitter import RecursiveCharacterTextSplitter
 
+# Informações dos arquivos para inserir na coleção
 SOURCE_FILE_NAMES = ["Apostila ML.pdf", "Artigo ML.pdf"]
 SOURCE_URLS = ["https://petmecanica.ufes.br/sites/petengenhariamecanica.ufes.br/files/field/anexo/apostila_do_minicurso_de_machine_learning.pdf", 
                "https://dspace.uevora.pt/rdpc/bitstream/10174/30174/1/apra_techReport_paper01_2018-11_v02.pdf"]
 SOURCE_TITLES = ["Apostila Machine Learning UFES", "Artigo Machine Learning UE"]
 SOURCES_TOPIC = "Conteúdos Machine Learning"
-INDEX_NAME = "ML"
+INDEX_NAME = "ML_Collection"
+EMBEDDING_DIM = 768 
 
-MILVUS_CONNECTION = {"host": os.environ.get("REMOTE_SERVER", '127.0.0.1'), 
-                     "port": '19530'}
-
+#Chunk
 CHUNK_SIZE = 250
 CHUNK_OVERLAP = 20
 
+# Definições para se conectar ao milvus (ruslan)
+MILVUS_HOST = os.environ.get("REMOTE_SERVER", '127.0.0.1')
+MILVUS_PORT = os.environ.get("MILVUS_PORT", "19530")
+
+# Definições para coneção com o Watsonx 
+API_KEY = os.environ.get("WATSONX_APIKEY")
+SERVICE_URL = "https://us-south.ml.cloud.ibm.com"
+project_id = os.environ.get("PROJECT_ID")
+
+# Iniciar o logger
 logger = logging.getLogger(__name__)
 formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
 handler = logging.StreamHandler()
@@ -30,21 +40,8 @@ handler.setFormatter(formatter)
 logger.addHandler(handler)
 logger.info("Logger initialized")
 
-def connect_watsonx():
-    API_KEY = os.environ.get("WATSONX_API_KEY")
-    PROJECT_ID = os.environ.get("WATSONX_PROJECT_ID")
-    URL = "https://us-south.ml.cloud.ibm.com"
-
-    wml_credentials = {
-        "url": URL,
-        "apikey": API_KEY,
-    }
-
-    client = APIClient(wml_credentials)
-    client.set.default_project(PROJECT_ID)
-    model = Model(client, "granite-1")
-    
-    return model
+# Conecção com o milvus
+connections.connect(host=MILVUS_HOST, port=MILVUS_PORT)
 
 def create_milvus_collection(collection_name, dim):
     if utility.has_collection(collection_name):
@@ -69,12 +66,21 @@ def create_milvus_collection(collection_name, dim):
     logger.info(f"Created collection: {collection_name}")
     return collection
 
-# Defina o nome da coleção e a dimensão dos embeddings
-COLLECTION_NAME = "Collection_ML"
-EMBEDDING_DIM = 768  
+def connect_watsonx():
+    API_KEY = os.environ.get("WATSONX_API_KEY")
+    PROJECT_ID = os.environ.get("WATSONX_PROJECT_ID")
+    URL = "https://us-south.ml.cloud.ibm.com"
 
-# Cria a coleção
-create_milvus_collection(COLLECTION_NAME, EMBEDDING_DIM)
+    wml_credentials = {
+        "url": URL,
+        "apikey": API_KEY,
+    }
+
+    client = APIClient(wml_credentials)
+    client.set.default_project(PROJECT_ID)
+    model = Model(client, "granite-1")
+    
+    return model
 
 def connect(connection_info):
     index = Milvus(
