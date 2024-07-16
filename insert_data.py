@@ -7,12 +7,14 @@ from ibm_watson_machine_learning.foundation_models import Model
 from langchain.vectorstores import Milvus
 from langchain.text_splitter import RecursiveCharacterTextSplitter
 
-# Informações dos arquivos para inserir na coleção
-SOURCE_FILE_NAMES = ["Apostila ML.pdf", "Artigo ML.pdf"]
-SOURCE_URLS = ["https://petmecanica.ufes.br/sites/petengenhariamecanica.ufes.br/files/field/anexo/apostila_do_minicurso_de_machine_learning.pdf", 
-               "https://dspace.uevora.pt/rdpc/bitstream/10174/30174/1/apra_techReport_paper01_2018-11_v02.pdf"]
+# Informações dos arquivos para inserir na coleção (mdswift)
+SOURCE_FILE_NAMES = ["Apostila_ML.pdf", "Artigo_ML.pdf"]
+SOURCE_URLS = ["https://github.com/vieirasre/WatsonX_Assistant_with_Milvus/blob/main/Apostila_ML.pdf", 
+               "https://github.com/vieirasre/WatsonX_Assistant_with_Milvus/blob/main/Artigo_ML.pdf"]
 SOURCE_TITLES = ["Apostila Machine Learning UFES", "Artigo Machine Learning UE"]
+SOURCES_TOPIC = "Conteúdos Machine Learning"
 INDEX_NAME = "ML_Collection"
+
 CHUNK_SIZE = 250
 CHUNK_OVERLAP = 20
 
