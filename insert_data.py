@@ -35,11 +35,11 @@ logger.info("Logger initialized")
 
 def connect(connection_info):
     index = Milvus(
-           embed_text,
-           connection_args=connection_info,
-           collection_name=INDEX_NAME,
-           index_params="text"
-       )
+        embed_text,
+        connection_args=connection_info,
+        collection_name=INDEX_NAME,
+        index_params="text"
+    )
     return index
 
 def connect_watsonx():
@@ -68,44 +68,48 @@ def embed_text(text):
 def load_docs_pdf(filenames, urls, titles):
     texts = []
     metadata = []
-    i = 0
-    for filename in filenames:
-        if len(urls) > i:
-            url = urls[i]
-        else:
-            url = ""
-        if len(titles) > i:
-            title = titles[i]
-        else:
-            title = ""
-        with open(filename, 'rb') as f:
-            pdf_reader = PyPDF2.PdfReader(f)
-            for page in pdf_reader.pages:
-                text = page.extract_text()
-                texts.append(text)
-                metadata.append({'url': url, 'title': title})
+    for i, filename in enumerate(filenames):
+        url = urls[i] if i < len(urls) else ""
+        title = titles[i] if i < len(titles) else ""
+        try:
+            with open(filename, 'rb') as f:
+                pdf_reader = PyPDF2.PdfReader(f)
+                for page in pdf_reader.pages:
+                    text = page.extract_text()
+                    texts.append(text)
+                    metadata.append({'url': url, 'title': title})
+        except FileNotFoundError:
+            logger.error(f"File not found: {filename}")
+        except Exception as e:
+            logger.error(f"Error reading {filename}: {e}")
     return texts, metadata
 
-def index(connection_info, filenames, urls, titles):
+def index_documents(connection_info, filenames, urls, titles):
     texts, metadata = load_docs_pdf(filenames, urls, titles)
     text_splitter = RecursiveCharacterTextSplitter(chunk_size=CHUNK_SIZE, chunk_overlap=CHUNK_OVERLAP)
     split_texts = text_splitter.create_documents(texts, metadata)
     logger.info(f"Documents chunked. Sending to Milvus.")
-    index = Milvus.from_documents(documents=split_texts, embedding=embed_text, connection_args=connection_info, collection_name=INDEX_NAME)
-    return index
+    try:
+        index = Milvus.from_documents(documents=split_texts, embedding=embed_text, connection_args=connection_info, collection_name=INDEX_NAME)
+        return index
+    except Exception as e:
+        logger.error(f"Failed to index documents: {e}")
+        raise
 
 INDEXED = True
+
 if __name__ == "__main__":
-    logger.setLevel(logging.INFO)
+    logger.info("Starting the Milvus connection process")
     if INDEXED:
-        logger.info("Starting the Milvus connection process")
         index = connect(MILVUS_CONNECTION)
         logger.info(f"Connected to Milvus at {MILVUS_HOST}:{MILVUS_PORT}")
     else:
         logger.info(f"Indexing at {MILVUS_CONNECTION}")
-        index = index(MILVUS_CONNECTION, SOURCE_FILE_NAMES, SOURCE_URLS, SOURCE_TITLES)
+        index = index_documents(MILVUS_CONNECTION, SOURCE_FILE_NAMES, SOURCE_URLS, SOURCE_TITLES)
 
-    print(index)
     query = "What is Data Mining?"
-    results = index.similarity_search(query)
-    print(results)
+    try:
+        results = index.similarity_search(query)
+        print(results)
+    except Exception as e:
+        logger.error(f"Error during similarity search: {e}")
