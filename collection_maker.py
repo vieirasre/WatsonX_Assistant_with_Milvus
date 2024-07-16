@@ -10,11 +10,12 @@ EMBEDDING_DIM = 768
 
 # Configurar logger
 logger = logging.getLogger(__name__)
-formatter = logging.Formatter('%(asctime)s - %(name)s - %(levellevelname)s - %(message)s')
+formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
 handler = logging.StreamHandler()
 handler.setLevel(logging.INFO)
 handler.setFormatter(formatter)
 logger.addHandler(handler)
+logger.setLevel(logging.INFO)
 logger.info("Logger initialized")
 
 def create_milvus_collection(collection_name, dim):
@@ -41,12 +42,12 @@ def create_milvus_collection(collection_name, dim):
     return collection
 
 if __name__ == "__main__":
-    logger.setLevel(logging.INFO)
+    logger.info("Starting the Milvus connection process")
     connections.connect(host=MILVUS_HOST, port=MILVUS_PORT)
+    logger.info(f"Connected to Milvus at {MILVUS_HOST}:{MILVUS_PORT}")
     
     if not utility.has_collection(INDEX_NAME):
-        logging.info(f"Creating collection {INDEX_NAME}")
+        logger.info(f"Creating collection {INDEX_NAME}")
         create_milvus_collection(INDEX_NAME, dim=EMBEDDING_DIM)
     else:
-        logging.info(f"Collection {INDEX_NAME} already exists")
-
+        logger.info(f"Collection {INDEX_NAME} already exists")
