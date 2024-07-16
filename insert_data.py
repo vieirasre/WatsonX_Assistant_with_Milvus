@@ -23,11 +23,12 @@ MILVUS_CONNECTION = {"host": MILVUS_HOST, "port": MILVUS_PORT}
 
 # Configurar logger
 logger = logging.getLogger(__name__)
-formatter = logging.Formatter('%(asctime)s - %(name)s - %(levellevelname)s - %(message)s')
+formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
 handler = logging.StreamHandler()
 handler.setLevel(logging.INFO)
 handler.setFormatter(formatter)
 logger.addHandler(handler)
+logger.setLevel(logging.INFO)
 logger.info("Logger initialized")
 
 def connect_watsonx():
@@ -44,7 +45,7 @@ def connect_watsonx():
     client.set.default_project(PROJECT_ID)
     model = Model(client, "granite-1")
     
-    print("Successfully connected to WatsonX")
+    logger.info("Successfully connected to WatsonX")
     
     return model
 
@@ -78,15 +79,16 @@ def index(connection_info, filenames, urls, titles):
     texts, metadata = load_docs_pdf(filenames, urls, titles)
     text_splitter = RecursiveCharacterTextSplitter(chunk_size=CHUNK_SIZE, chunk_overlap=CHUNK_OVERLAP)
     split_texts = text_splitter.create_documents(texts, metadata)
-    logging.info(f"Documents chunked. Sending to Milvus.")
+    logger.info(f"Documents chunked. Sending to Milvus.")
     index = Milvus.from_documents(documents=split_texts, embedding=embed_text, connection_args=connection_info, collection_name=INDEX_NAME)
     return index
 
 if __name__ == "__main__":
-    logger.setLevel(logging.INFO)
+    logger.info("Starting the Milvus connection process")
     connections.connect(host=MILVUS_HOST, port=MILVUS_PORT)
+    logger.info(f"Connected to Milvus at {MILVUS_HOST}:{MILVUS_PORT}")
     
-    logging.info(f"Indexing at {MILVUS_CONNECTION}")
+    logger.info(f"Indexing at {MILVUS_CONNECTION}")
     index = index(MILVUS_CONNECTION, SOURCE_FILE_NAMES, SOURCE_URLS, SOURCE_TITLES)
     
     query = "What is Data Mining?"
