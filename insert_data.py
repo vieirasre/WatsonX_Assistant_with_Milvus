@@ -13,7 +13,7 @@ SOURCE_URLS = ["https://github.com/vieirasre/WatsonX_Assistant_with_Milvus/blob/
                "https://github.com/vieirasre/WatsonX_Assistant_with_Milvus/blob/main/Artigo_ML.pdf"]
 SOURCE_TITLES = ["Apostila Machine Learning UFES", "Artigo Machine Learning UE"]
 SOURCES_TOPIC = "Conteúdos Machine Learning"
-INDEX_NAME = "ML_Collection"
+INDEX_NAME = "ML_Collection_to_LC"
 
 CHUNK_SIZE = 250
 CHUNK_OVERLAP = 20
