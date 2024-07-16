@@ -13,7 +13,7 @@ SOURCE_URLS = ["https://github.com/vieirasre/WatsonX_Assistant_with_Milvus/blob/
                "https://github.com/vieirasre/WatsonX_Assistant_with_Milvus/blob/main/Artigo_ML.pdf"]
 SOURCE_TITLES = ["Apostila Machine Learning UFES", "Artigo Machine Learning UE"]
 SOURCES_TOPIC = "Conteúdos Machine Learning"
-INDEX_NAME = "ML_Collection"
+INDEX_NAME = "ML_Collection_to_LC_teste2"
 
 CHUNK_SIZE = 250
 CHUNK_OVERLAP = 20
@@ -33,27 +33,27 @@ logger.addHandler(handler)
 logger.setLevel(logging.INFO)
 logger.info("Logger initialized")
 
-def create_milvus_collection():
-    if utility.has_collection(INDEX_NAME):
-        utility.drop_collection(INDEX_NAME)
-        logger.info(f"Dropped existing collection: {INDEX_NAME}")
+def create_milvus_collection(collection_name, dim):
+    if utility.has_collection(collection_name):
+        utility.drop_collection(collection_name)
+        logger.info(f"Dropped existing collection: {collection_name}")
 
     fields = [
-        FieldSchema(name="id", dtype=DataType.INT64, is_primary=True, auto_id=True),
-        FieldSchema(name="embedding", dtype=DataType.FLOAT_VECTOR, dim=768),
-        FieldSchema(name="metadata", dtype=DataType.JSON)
+        FieldSchema(name='pk', dtype=DataType.INT64, is_primary=True, auto_id=True),
+        FieldSchema(name='text', dtype=DataType.VARCHAR, max_length=65_535),
+        FieldSchema(name='vector', dtype=DataType.FLOAT_VECTOR, dim=1536)
     ]
     
-    schema = CollectionSchema(fields=fields, description="Collection for embeddings and metadata")
-    collection = Collection(name=INDEX_NAME, schema=schema)
+    schema = CollectionSchema(fields=fields, description="General collection for id, text and vector")
+    collection = Collection(name=collection_name, schema=schema)
     
     index_params = {
         "metric_type": "L2",
         "index_type": "IVF_FLAT",
         "params": {"nlist": 2048}
     }
-    collection.create_index(field_name="embedding", index_params=index_params)
-    logger.info(f"Created collection: {INDEX_NAME}")
+    collection.create_index(field_name="vector", index_params=index_params)
+    logger.info(f"Created collection: {collection_name}")
     return collection
 
 def connect_watsonx():
