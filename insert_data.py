@@ -33,6 +33,15 @@ logger.addHandler(handler)
 logger.setLevel(logging.INFO)
 logger.info("Logger initialized")
 
+def connect(connection_info):
+    index = Milvus(
+           embed_text,
+           connection_args=connection_info,
+           collection_name=INDEX_NAME,
+           index_params="text"
+       )
+    return index
+
 def connect_watsonx():
     API_KEY = os.environ.get("WATSONX_APIKEY")
     PROJECT_ID = os.environ.get("PROJECT_ID")
@@ -85,14 +94,18 @@ def index(connection_info, filenames, urls, titles):
     index = Milvus.from_documents(documents=split_texts, embedding=embed_text, connection_args=connection_info, collection_name=INDEX_NAME)
     return index
 
+INDEXED = True
 if __name__ == "__main__":
-    logger.info("Starting the Milvus connection process")
-    connections.connect(host=MILVUS_HOST, port=MILVUS_PORT)
-    logger.info(f"Connected to Milvus at {MILVUS_HOST}:{MILVUS_PORT}")
-    
-    logger.info(f"Indexing at {MILVUS_CONNECTION}")
-    index = index(MILVUS_CONNECTION, SOURCE_FILE_NAMES, SOURCE_URLS, SOURCE_TITLES)
-    
+    logger.setLevel(logging.INFO)
+    if INDEXED:
+        logger.info("Starting the Milvus connection process")
+        index = connect(MILVUS_CONNECTION)
+        logger.info(f"Connected to Milvus at {MILVUS_HOST}:{MILVUS_PORT}")
+    else:
+        logger.info(f"Indexing at {MILVUS_CONNECTION}")
+        index = index(MILVUS_CONNECTION, SOURCE_FILE_NAMES, SOURCE_URLS, SOURCE_TITLES)
+
+    print(index)
     query = "What is Data Mining?"
     results = index.similarity_search(query)
     print(results)
