@@ -24,12 +24,12 @@ def create_milvus_collection(collection_name, dim):
         logger.info(f"Dropped existing collection: {collection_name}")
 
     fields = [
-        FieldSchema(name="id", dtype=DataType.INT64, is_primary=True, auto_id=True),
-        FieldSchema(name="embedding", dtype=DataType.FLOAT_VECTOR, dim=dim),
-        FieldSchema(name="metadata", dtype=DataType.JSON)
+        FieldSchema(name='pk', dtype=DataType.INT64, is_primary=True, auto_id=True),
+        FieldSchema(name='text', dtype=DataType.VARCHAR, max_length=65_535),
+        FieldSchema(name='vector', dtype=DataType.FLOAT_VECTOR, dim=1536)
     ]
     
-    schema = CollectionSchema(fields=fields, description="General collection for embeddings and metadata")
+    schema = CollectionSchema(fields=fields, description="General collection for id, text and vector")
     collection = Collection(name=collection_name, schema=schema)
     
     index_params = {
@@ -37,7 +37,7 @@ def create_milvus_collection(collection_name, dim):
         "index_type": "IVF_FLAT",
         "params": {"nlist": 2048}
     }
-    collection.create_index(field_name="embedding", index_params=index_params)
+    collection.create_index(field_name="vector", index_params=index_params)
     logger.info(f"Created collection: {collection_name}")
     return collection
 
