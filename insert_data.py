@@ -96,7 +96,7 @@ def index_documents(connection_info, filenames, urls, titles):
         logger.error(f"Failed to index documents: {e}")
         raise
 
-INDEXED = True
+INDEXED = False
 
 if __name__ == "__main__":
     logger.info("Starting the Milvus connection process")
