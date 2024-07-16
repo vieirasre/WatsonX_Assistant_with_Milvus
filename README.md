@@ -45,6 +45,24 @@ sudo yum install git
 ```
 e segue o tutorial a partir da parte de instalação do milvus :)
 
+```
+wget https://github.com/milvus-io/milvus/releases/download/v2.3.7/milvus_2.3.7-1_amd64.deb
+sudo apt-get update
+sudo dpkg -i milvus_2.3.7-1_amd64.deb
+sudo apt-get -f install
+```
+
+
+```
+sudo systemctl restart milvus
+```
+
+```
+sudo systemctl status milvus
+```
+
+
+
 depois de instalar *Python 3.10* eu fiz um 
 ```
 sudo apt autoremove
@@ -85,6 +103,12 @@ https://dataplatform.cloud.ibm.com/docs/content/wsj/admin/admin-apikeys.html?con
 export WATSONX_APIKEY=your_api_key
 export PROJECT_ID=your_project_id
 ```
+
+meu código:
+git clone https://github.com/vieirasre/WatsonX_Assistant_with_Milvus.git
+cd WatsonX_Assistant_with_Milvus
+pip install -r requirements.txt
+
 
 
 
