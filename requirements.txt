@@ -8,4 +8,4 @@ dotenv==0.21.0
 sentence-transformers==2.2.2
 numpy==1.24.3
 ibm-watson-machine-learning==1.0.257
-
+huggingface_hub==0.15.1
