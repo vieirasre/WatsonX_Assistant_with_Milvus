@@ -44,6 +44,9 @@ def connect(connection_info):
 
 def index(connection_info, filenames, urls, titles):
     texts, metadata = load_docs_pdf(filenames, urls, titles)
+    if not texts:
+        logging.error("No text extracted from PDFs.")
+        return None
     text_splitter = RecursiveCharacterTextSplitter(chunk_size=CHUNK_SIZE, chunk_overlap=CHUNK_OVERLAP)
     split_texts = text_splitter.create_documents(texts, metadata)
     logging.info(f"Documents chunked. Sending to Milvus.")
@@ -72,8 +75,12 @@ def load_docs_pdf(filenames, urls, titles):
             pdf_reader = PyPDF2.PdfReader(f)
             for page in pdf_reader.pages:
                 text = page.extract_text()
-                texts.append(text)
-                metadata.append({'url': url, 'title': title})
+                if text:
+                    texts.append(text)
+                    metadata.append({'url': url, 'title': title})
+                else:
+                    logging.warning(f"No text extracted from page {pdf_reader.pages.index(page)} in {filename}")
+        i += 1
     return texts, metadata
 
 INDEXED = True
@@ -86,8 +93,12 @@ if __name__ == "__main__":
         logging.info(f"Indexing at {MILVUS_CONNECTION}")
         index = index(MILVUS_CONNECTION, SOURCE_FILE_NAMES, SOURCE_URLS, SOURCE_TITLES)
 
-    print(index)
-    query = "What is the interest rate for Lendyr Preferred?"
-    results = index.similarity_search(query)
-    print(results)
+    if index:
+        print(index)
+        query = "What is the interest rate for Lendyr Preferred?"
+        results = index.similarity_search(query)
+        print(results)
+    else:
+        logging.error("Index creation failed.")
+
 
