@@ -67,6 +67,7 @@ def connect_watsonx():
 
 def embed_documents(texts):
     embeddings = []
+    model = connect_watsonx()
     for text in texts:
       embedding = model.generate_embeddings(text)
       embeddings.append(embedding)
