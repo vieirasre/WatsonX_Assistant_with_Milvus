@@ -11,9 +11,6 @@ SOURCE_URLS = ["https://github.com/vieirasre/WatsonX_Assistant_with_Milvus/blob/
 SOURCE_TITLES = ["Apostila Machine Learning UFES", "Artigo Machine Learning UE"]
 SOURCES_TOPIC = "Conteúdos Machine Learning"
 INDEX_NAME = "ML_Collection_to_LC"
-
-authenticator = ApiKeyAuthenticator(os.environ.get("WATSONX_APIKEY"))
-service = NaturalLanguageUnderstanding(version='2021-08-01', authenticator=authenticator)
   
 EMBED = HuggingFaceHubEmbeddings(repo_id="sentence-transformers/all-MiniLM-L6-v2")
 MILVUS_CONNECTION={"host": os.environ.get("MILVUS_HOST"), "port": os.environ.get("MILVUS_PORT")}
@@ -80,6 +77,6 @@ if __name__ == "__main__":
         index = index(MILVUS_CONNECTION, SOURCE_FILE_NAMES, SOURCE_URLS, SOURCE_TITLES)
     
     print(index)
-    query = "What is the interest rate for Lendyr Preferred?"
+    query = "What is Data Mining?"
     results = index.similarity_search(query)
     print(results)
