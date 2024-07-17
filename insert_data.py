@@ -90,7 +90,7 @@ def index_documents(connection_info, filenames, urls, titles):
     split_texts = text_splitter.create_documents(texts, metadata)
     logger.info(f"Documents chunked. Sending to Milvus.")
     try:
-        index = Milvus.from_texts(texts=split_texts, embedding=embed_documents, connection_args=connection_info, collection_name=INDEX_NAME)
+        index = Milvus.from_texts(texts=split_texts, embedding=embed_documents(split_texts), connection_args=connection_info, collection_name=INDEX_NAME)
         return index
     except Exception as e:
         logger.error(f"Failed to index documents: {e}")
