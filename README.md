@@ -105,9 +105,16 @@ export PROJECT_ID=your_project_id
 ```
 
 meu código:
+
+```
 git clone https://github.com/vieirasre/WatsonX_Assistant_with_Milvus.git
+```
+```
 cd WatsonX_Assistant_with_Milvus
+```
+```
 pip install -r requirements.txt
+```
 
 
 
