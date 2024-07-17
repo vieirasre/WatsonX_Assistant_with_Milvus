@@ -45,10 +45,9 @@ def connect(connection_info):
 def connect_watsonx():
     API_KEY = os.environ.get("WATSONX_APIKEY")
     PROJECT_ID = os.environ.get("PROJECT_ID")
-    URL = "https://us-south.ml.cloud.ibm.com"
-
+    
     wml_credentials = {
-        "url": URL,
+        "url": "https://us-south.ml.cloud.ibm.com",
         "apikey": API_KEY,
     }
 
