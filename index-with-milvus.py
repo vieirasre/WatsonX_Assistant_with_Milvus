@@ -1,7 +1,9 @@
 import os, PyPDF2, logging
 
-from langchain.vectorstores import Milvus
-from langchain.embeddings import HuggingFaceHubEmbeddings
+#from langchain.vectorstores import Milvus
+from langchain_community.vectorstores import Milvus
+#from langchain.embeddings import HuggingFaceHubEmbeddings
+from langchain_community.embeddings import HuggingFaceHubEmbeddings
 from langchain.text_splitter import RecursiveCharacterTextSplitter
 
 SOURCE_FILE_NAMES=["Lendyr Everyday Card.pdf", "Lendyr Preferred Card.pdf", "Lendyr Topaz Card.pdf"]
