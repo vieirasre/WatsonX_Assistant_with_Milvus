@@ -15,8 +15,8 @@ SOURCE_TITLES = ["Apostila Machine Learning UFES", "Artigo Machine Learning UE"]
 SOURCES_TOPIC = "Conteúdos Machine Learning"
 INDEX_NAME = "ML_Collection_to_LC"
 
-#EMBED = HuggingFaceHubEmbeddings(repo_id="sentence-transformers/all-MiniLM-L6-v2")
-EMBED = OpenAIEmbeddings()
+EMBED = HuggingFaceHubEmbeddings(repo_id="sentence-transformers/all-MiniLM-L6-v2")
+#EMBED = OpenAIEmbeddings()
 MILVUS_CONNECTION = {"host": os.environ.get("MILVUS_HOST"), "port": os.environ.get("MILVUS_PORT")}
 
 CHUNK_SIZE = 250
