@@ -35,7 +35,7 @@ logger.info("Logger initialized")
 
 def connect(connection_info):
     index = Milvus(
-        embed_text,
+        embed_documents,
         connection_args=connection_info,
         collection_name=INDEX_NAME,
         index_params="text"
