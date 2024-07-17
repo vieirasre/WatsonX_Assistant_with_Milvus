@@ -15,7 +15,7 @@ SOURCE_TITLES = ["Apostila Machine Learning UFES", "Artigo Machine Learning UE"]
 SOURCES_TOPIC = "Conteúdos Machine Learning"
 INDEX_NAME = "ML_Collection_to_LC"
 
-EMBED = HuggingFaceHubEmbeddings(repo_id="sentence-transformers/all-mpnet-base-v2")
+EMBED = HuggingFaceHubEmbeddings(repo_id="sentence-transformers/all-MiniLM-L6-v2")
 
 
 #EMBED = OpenAIEmbeddings()
