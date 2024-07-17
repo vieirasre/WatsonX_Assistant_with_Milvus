@@ -68,9 +68,11 @@ def connect_watsonx():
 def embed_documents(texts):
     embeddings = []
     model = connect_watsonx()
+    logger.info(f"Connected to WatsonX model: {model}")
     for text in texts:
-      embedding = model.generate_embeddings(text)
-      embeddings.append(embedding)
+        embedding = model.generate_embeddings(text)
+        #logger.info(f"Generated embedding for text: {text[:50]}...")  # Exemplo de logging de partes do texto
+        embeddings.append(embedding)
     return embeddings
 
 def load_docs_pdf(filenames, urls, titles):
