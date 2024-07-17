@@ -1,27 +1,28 @@
 import os, PyPDF2, logging
 
 #from langchain.vectorstores import Milvus
-from langchain_community.vectorstores import Milvus
 #from langchain.embeddings import HuggingFaceHubEmbeddings
-from langchain_community.embeddings import HuggingFaceHubEmbeddings
+#from langchain_community.embeddings import HuggingFaceHubEmbeddings
+#from langchain_community.vectorstores import Milvus
+
+from langchain_huggingface import HuggingFaceEndpointEmbeddings
+from langchain_milvus import MilvusVectorStore
 from langchain.text_splitter import RecursiveCharacterTextSplitter
 
-SOURCE_FILE_NAMES=["Lendyr Everyday Card.pdf", "Lendyr Preferred Card.pdf", "Lendyr Topaz Card.pdf"]
-SOURCE_URLS=["https://www.lendyr.com/", "https://www.lendyr.com/", "https://www.lendyr.com/"]
-SOURCE_TITLES=["Lendyr Everyday Card", "Lendyr Preferred", "Lendyr Topaz"]
+SOURCE_FILE_NAMES = ["Lendyr Everyday Card.pdf", "Lendyr Preferred Card.pdf", "Lendyr Topaz Card.pdf"]
+SOURCE_URLS = ["https://www.lendyr.com/", "https://www.lendyr.com/", "https://www.lendyr.com/"]
+SOURCE_TITLES = ["Lendyr Everyday Card", "Lendyr Preferred", "Lendyr Topaz"]
 
-# SOURCES_TOPIC should be a single title that describes all of the sources.  The LLM uses it to decide whether to search those sources.
-SOURCES_TOPIC="Lendyr Credit Cards"
+SOURCES_TOPIC = "Lendyr Credit Cards"
+INDEX_NAME = "Lendyr3"
 
-INDEX_NAME="Lendyr3"
-
-EMBED = HuggingFaceHubEmbeddings(repo_id="sentence-transformers/all-MiniLM-L6-v2")
+EMBED = HuggingFaceEndpointEmbeddings(repo_id="sentence-transformers/all-MiniLM-L6-v2")
 MILVUS_HOST = os.environ.get("REMOTE_SERVER", '127.0.0.1')
 MILVUS_PORT = os.environ.get("MILVUS_PORT", "19530")
-MILVUS_CONNECTION={"host": MILVUS_HOST, "port": MILVUS_PORT}
+MILVUS_CONNECTION = {"host": MILVUS_HOST, "port": MILVUS_PORT}
 
-CHUNK_SIZE=250
-CHUNK_OVERLAP=20
+CHUNK_SIZE = 250
+CHUNK_OVERLAP = 20
 
 logger = logging.getLogger(__name__)
 formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
@@ -32,23 +33,26 @@ logger.addHandler(handler)
 logger.info("Logger initialized")
 
 def connect(connection_info):
-    index = Milvus(
-           EMBED,
-           connection_args=connection_info,
-           collection_name=INDEX_NAME,
-           index_params="text"
-       )
+    index = MilvusVectorStore(
+        embedding_function=EMBED,
+        connection_args=connection_info,
+        collection_name=INDEX_NAME,
+        index_params="text"
+    )
     return index
-
 
 def index(connection_info, filenames, urls, titles):
     texts, metadata = load_docs_pdf(filenames, urls, titles)
     text_splitter = RecursiveCharacterTextSplitter(chunk_size=CHUNK_SIZE, chunk_overlap=CHUNK_OVERLAP)
     split_texts = text_splitter.create_documents(texts, metadata)
-    logging.info(f"Documents chunked.  Sending to Milvus.")
-    index = Milvus.from_documents(documents=split_texts, embedding=EMBED, connection_args=connection_info, collection_name=INDEX_NAME)
+    logging.info(f"Documents chunked. Sending to Milvus.")
+    index = MilvusVectorStore.from_documents(
+        documents=split_texts,
+        embedding_function=EMBED,
+        connection_args=connection_info,
+        collection_name=INDEX_NAME
+    )
     return index
-
 
 def load_docs_pdf(filenames, urls, titles):
     texts = []
@@ -71,7 +75,7 @@ def load_docs_pdf(filenames, urls, titles):
                 metadata.append({'url': url, 'title': title})
     return texts, metadata
 
-INDEXED=True
+INDEXED = True
 if __name__ == "__main__":
     logger.setLevel(logging.INFO)
     if INDEXED:
@@ -80,7 +84,7 @@ if __name__ == "__main__":
     else:
         logging.info(f"Indexing at {MILVUS_CONNECTION}")
         index = index(MILVUS_CONNECTION, SOURCE_FILE_NAMES, SOURCE_URLS, SOURCE_TITLES)
-    
+
     print(index)
     query = "What is the interest rate for Lendyr Preferred?"
     results = index.similarity_search(query)
