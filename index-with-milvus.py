@@ -6,7 +6,8 @@ import os, PyPDF2, logging
 #from langchain_community.vectorstores import Milvus
 
 from langchain_huggingface import HuggingFaceEndpointEmbeddings
-from langchain_milvus import MilvusVectorStore
+from langchain_milvus import Milvus
+
 from langchain.text_splitter import RecursiveCharacterTextSplitter
 
 SOURCE_FILE_NAMES = ["Lendyr Everyday Card.pdf", "Lendyr Preferred Card.pdf", "Lendyr Topaz Card.pdf"]
@@ -33,7 +34,7 @@ logger.addHandler(handler)
 logger.info("Logger initialized")
 
 def connect(connection_info):
-    index = MilvusVectorStore(
+    index = Milvus(
         embedding_function=EMBED,
         connection_args=connection_info,
         collection_name=INDEX_NAME,
@@ -46,7 +47,7 @@ def index(connection_info, filenames, urls, titles):
     text_splitter = RecursiveCharacterTextSplitter(chunk_size=CHUNK_SIZE, chunk_overlap=CHUNK_OVERLAP)
     split_texts = text_splitter.create_documents(texts, metadata)
     logging.info(f"Documents chunked. Sending to Milvus.")
-    index = MilvusVectorStore.from_documents(
+    index = Milvus.from_documents(
         documents=split_texts,
         embedding_function=EMBED,
         connection_args=connection_info,
@@ -89,3 +90,4 @@ if __name__ == "__main__":
     query = "What is the interest rate for Lendyr Preferred?"
     results = index.similarity_search(query)
     print(results)
+
