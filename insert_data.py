@@ -60,10 +60,17 @@ def connect_watsonx():
     
     return model
 
-def embed_documents(text):
-    model = connect_watsonx()
-    embedding = model.generate_embeddings(text)
-    return embedding
+#def embed_documents(text):
+#    model = connect_watsonx()
+#    embedding = model.generate_embeddings(text)
+#    return embedding
+
+def embed_documents(texts):
+    embeddings = []
+    for text in texts:
+      embedding = model.generate_embeddings(text)
+      embeddings.append(embedding)
+    return embeddings
 
 def load_docs_pdf(filenames, urls, titles):
     texts = []
@@ -88,9 +95,10 @@ def index_documents(connection_info, filenames, urls, titles):
     texts, metadata = load_docs_pdf(filenames, urls, titles)
     text_splitter = RecursiveCharacterTextSplitter(chunk_size=CHUNK_SIZE, chunk_overlap=CHUNK_OVERLAP)
     split_texts = text_splitter.create_documents(texts, metadata)
+    embeddings = embed_documents(split_texts)
     logger.info(f"Documents chunked. Sending to Milvus.")
     try:
-        index = Milvus.from_texts(texts=split_texts, embedding=embed_documents(split_texts), connection_args=connection_info, collection_name=INDEX_NAME)
+        index = Milvus.from_texts(texts=split_texts, embedding=embeddings, connection_args=connection_info, collection_name=INDEX_NAME)
         return index
     except Exception as e:
         logger.error(f"Failed to index documents: {e}")
