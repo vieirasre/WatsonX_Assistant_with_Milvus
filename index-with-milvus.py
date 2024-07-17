@@ -14,7 +14,9 @@ SOURCES_TOPIC="Lendyr Credit Cards"
 INDEX_NAME="Lendyr3"
 
 EMBED = HuggingFaceHubEmbeddings(repo_id="sentence-transformers/all-MiniLM-L6-v2")
-MILVUS_CONNECTION={"host": os.environ.get("MILVUS_HOST"), "port": os.environ.get("MILVUS_PORT")}
+MILVUS_HOST = os.environ.get("REMOTE_SERVER", '127.0.0.1')
+MILVUS_PORT = os.environ.get("MILVUS_PORT", "19530")
+MILVUS_CONNECTION={"host": MILVUS_HOST, "port": MILVUS_PORT}
 
 CHUNK_SIZE=250
 CHUNK_OVERLAP=20
