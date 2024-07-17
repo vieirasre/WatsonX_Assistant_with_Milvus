@@ -5,6 +5,7 @@ import logging
 from langchain.vectorstores import Milvus
 from langchain.embeddings import HuggingFaceHubEmbeddings
 from langchain.text_splitter import RecursiveCharacterTextSplitter
+from langchain_openai import OpenAIEmbeddings
 
 # Informações dos arquivos para inserir na coleção (mdswift)
 SOURCE_FILE_NAMES = ["Apostila_ML.pdf", "Artigo_ML.pdf"]
@@ -14,7 +15,8 @@ SOURCE_TITLES = ["Apostila Machine Learning UFES", "Artigo Machine Learning UE"]
 SOURCES_TOPIC = "Conteúdos Machine Learning"
 INDEX_NAME = "ML_Collection_to_LC"
 
-EMBED = HuggingFaceHubEmbeddings(repo_id="sentence-transformers/all-MiniLM-L6-v2")
+#EMBED = HuggingFaceHubEmbeddings(repo_id="sentence-transformers/all-MiniLM-L6-v2")
+EMBED = OpenAIEmbeddings()
 MILVUS_CONNECTION = {"host": os.environ.get("MILVUS_HOST"), "port": os.environ.get("MILVUS_PORT")}
 
 CHUNK_SIZE = 250
