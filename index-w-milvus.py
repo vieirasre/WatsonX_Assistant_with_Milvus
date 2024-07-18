@@ -16,7 +16,7 @@ SOURCE_URLS = ["https://github.com/vieirasre/WatsonX_Assistant_with_Milvus/blob/
                "https://github.com/vieirasre/WatsonX_Assistant_with_Milvus/blob/main/Artigo_ML.pdf"]
 SOURCE_TITLES = ["Apostila Machine Learning UFES", "Artigo Machine Learning UE"]
 SOURCES_TOPIC = "Conteúdos Machine Learning"
-INDEX_NAME = "ML_Collection2"
+INDEX_NAME = "ML_Collection3"
 
 EMBED = HuggingFaceEndpointEmbeddings(repo_id="sentence-transformers/all-MiniLM-L6-v2")
 MILVUS_HOST = os.environ.get("REMOTE_SERVER", '127.0.0.1')
