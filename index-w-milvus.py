@@ -1,7 +1,13 @@
 import os, PyPDF2, logging
 
-from langchain.vectorstores import Milvus
-from langchain.embeddings import HuggingFaceHubEmbeddings
+#from langchain.vectorstores import Milvus
+#from langchain.embeddings import HuggingFaceHubEmbeddings
+#from langchain_community.embeddings import HuggingFaceHubEmbeddings
+#from langchain_community.vectorstores import Milvus
+
+from langchain_huggingface import HuggingFaceEndpointEmbeddings
+from langchain_milvus import Milvus
+
 from langchain.text_splitter import RecursiveCharacterTextSplitter
 
 # Informações dos arquivos para inserir na coleção (mdswift)
@@ -12,11 +18,13 @@ SOURCE_TITLES = ["Apostila Machine Learning UFES", "Artigo Machine Learning UE"]
 SOURCES_TOPIC = "Conteúdos Machine Learning"
 INDEX_NAME = "ML_Collection2"
 
-EMBED = HuggingFaceHubEmbeddings(repo_id="sentence-transformers/all-MiniLM-L6-v2")
-MILVUS_CONNECTION={"host": os.environ.get("MILVUS_HOST"), "port": os.environ.get("MILVUS_PORT")}
+EMBED = HuggingFaceEndpointEmbeddings(repo_id="sentence-transformers/all-MiniLM-L6-v2")
+MILVUS_HOST = os.environ.get("REMOTE_SERVER", '127.0.0.1')
+MILVUS_PORT = os.environ.get("MILVUS_PORT", "19530")
+MILVUS_CONNECTION = {"host": MILVUS_HOST, "port": MILVUS_PORT}
 
-CHUNK_SIZE=250
-CHUNK_OVERLAP=20
+CHUNK_SIZE = 250
+CHUNK_OVERLAP = 20
 
 logger = logging.getLogger(__name__)
 formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
@@ -28,22 +36,28 @@ logger.info("Logger initialized")
 
 def connect(connection_info):
     index = Milvus(
-           EMBED,
-           connection_args=connection_info,
-           collection_name=INDEX_NAME,
-           index_params="text"
-       )
+        embedding_function=EMBED,
+        connection_args=connection_info,
+        collection_name=INDEX_NAME,
+        index_params="text"
+    )
     return index
-
 
 def index(connection_info, filenames, urls, titles):
     texts, metadata = load_docs_pdf(filenames, urls, titles)
+    if not texts:
+        logging.error("No text extracted from PDFs.")
+        return None
     text_splitter = RecursiveCharacterTextSplitter(chunk_size=CHUNK_SIZE, chunk_overlap=CHUNK_OVERLAP)
     split_texts = text_splitter.create_documents(texts, metadata)
-    logging.info(f"Documents chunked.  Sending to Milvus.")
-    index = Milvus.from_documents(documents=split_texts, embedding=EMBED, connection_args=connection_info, collection_name=INDEX_NAME)
+    logging.info(f"Documents chunked. Sending to Milvus.")
+    index = Milvus.from_documents(
+        documents=split_texts,
+        embedding_function=EMBED,
+        connection_args=connection_info,
+        collection_name=INDEX_NAME
+    )
     return index
-
 
 def load_docs_pdf(filenames, urls, titles):
     texts = []
@@ -62,11 +76,15 @@ def load_docs_pdf(filenames, urls, titles):
             pdf_reader = PyPDF2.PdfReader(f)
             for page in pdf_reader.pages:
                 text = page.extract_text()
-                texts.append(text)
-                metadata.append({'url': url, 'title': title})
+                if text:
+                    texts.append(text)
+                    metadata.append({'url': url, 'title': title})
+                else:
+                    logging.warning(f"No text extracted from page {pdf_reader.pages.index(page)} in {filename}")
+        i += 1
     return texts, metadata
 
-INDEXED=True
+INDEXED= False
 if __name__ == "__main__":
     logger.setLevel(logging.INFO)
     if INDEXED:
