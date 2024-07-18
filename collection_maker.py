@@ -26,7 +26,7 @@ def create_milvus_collection(collection_name, dim):
     fields = [
         FieldSchema(name='pk', dtype=DataType.INT64, is_primary=True, auto_id=True),
         FieldSchema(name='text', dtype=DataType.VARCHAR, max_length=65_535),
-        FieldSchema(name='vector', dtype=DataType.FLOAT_VECTOR, dim=1536)
+        FieldSchema(name='vector', dtype=DataType.FLOAT_VECTOR, dim=384)
     ]
     
     schema = CollectionSchema(fields=fields, description="General collection for id, text and vector")
