@@ -5,7 +5,7 @@ from pymilvus import connections, FieldSchema, CollectionSchema, DataType, Colle
 # Parâmetros de conexão
 MILVUS_HOST = os.environ.get("REMOTE_SERVER", '127.0.0.1')
 MILVUS_PORT = os.environ.get("MILVUS_PORT", "19530")
-INDEX_NAME = "ML_Collection2"
+INDEX_NAME = "ML_Collection3"
 EMBEDDING_DIM = 768
 
 # Configurar logger
