@@ -4,8 +4,16 @@ Como construir um WatsonX Assistant que utilize NeuralSeek com Milvus Vector Dat
 
 ### 1 - Criação do Virtual Server
 
-1. **Localização**: DALLAS
-2. **IP Flutuante**: Crie um IP flutuante que será usado como IP público.
+ - Faça login na sua conta do IBM Cloud [aqui](https://cloud.ibm.com/).
+ - Na barra de pesquisa, digite "Virtual Servers" e selecione a opção "Virtual Servers" nos resultados.
+ - Na página de Virtual Servers, você encontrará várias opções de servidores virtuais. *A sua localização precisa ser DALLAS*
+ - Vá para "Image and Profile" e clique em "Change image" para buscar por "ubuntu" e escolha "22.04 LTS Jammy Jellyfish Minimal Install" e clique em "save".
+ - Clique na opção de servidor virtual escolhida para começar a configurá-lo.
+ - Na página de configuração, você será solicitado a fornecer vários detalhes como localização, CPU, memória, armazenamento e sistema operacional. Escolha "bx2-2x8".
+ - Crie uma chave SSH com o nome "pem_ibmcloud" e faça o download.
+ - Complete as opções restantes de configuração como default.
+ - Clique no botão "Create" para criar a instância.
+ - *Crie um IP flutuante que será usado como IP público.*
 
 > **Nota**: Se a chave for baixada como `minha-chave.prv`, renomeie para `minha-chave.pem`.
 
