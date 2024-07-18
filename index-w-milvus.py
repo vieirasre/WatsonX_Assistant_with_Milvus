@@ -75,6 +75,7 @@ def load_docs_pdf(filenames, urls, titles):
     return texts, metadata
 
 INDEXED=False
+
 if __name__ == "__main__":
     logger.setLevel(logging.INFO)
     if INDEXED:
