@@ -3,7 +3,7 @@ import logging
 from pymilvus import connections, FieldSchema, CollectionSchema, DataType, Collection, utility
 
 # Parâmetros de conexão
-MILVUS_HOST = os.environ.get("REMOTE_SERVER", '127.0.0.1')
+MILVUS_HOST = os.environ.get("REMOTE_SERVER", "localhost")
 MILVUS_PORT = os.environ.get("MILVUS_PORT", "19530")
 
 INDEX_NAME = "ML_Collection4"
