@@ -36,28 +36,22 @@ logger.info("Logger initialized")
 
 def connect(connection_info):
     index = Milvus(
-        embedding_function=EMBED,
-        connection_args=connection_info,
-        collection_name=INDEX_NAME,
-        index_params="text"
-    )
+           EMBED,
+           connection_args=connection_info,
+           collection_name=INDEX_NAME,
+           index_params="text"
+       )
     return index
+
 
 def index(connection_info, filenames, urls, titles):
     texts, metadata = load_docs_pdf(filenames, urls, titles)
-    if not texts:
-        logging.error("No text extracted from PDFs.")
-        return None
     text_splitter = RecursiveCharacterTextSplitter(chunk_size=CHUNK_SIZE, chunk_overlap=CHUNK_OVERLAP)
     split_texts = text_splitter.create_documents(texts, metadata)
-    logging.info(f"Documents chunked. Sending to Milvus.")
-    index = Milvus.from_documents(
-        documents=split_texts,
-        embedding_function=EMBED,
-        connection_args=connection_info,
-        collection_name=INDEX_NAME
-    )
+    logging.info(f"Documents chunked.  Sending to Milvus.")
+    index = Milvus.from_documents(documents=split_texts, embedding=EMBED, connection_args=connection_info, collection_name=INDEX_NAME)
     return index
+
 
 def load_docs_pdf(filenames, urls, titles):
     texts = []
@@ -76,15 +70,11 @@ def load_docs_pdf(filenames, urls, titles):
             pdf_reader = PyPDF2.PdfReader(f)
             for page in pdf_reader.pages:
                 text = page.extract_text()
-                if text:
-                    texts.append(text)
-                    metadata.append({'url': url, 'title': title})
-                else:
-                    logging.warning(f"No text extracted from page {pdf_reader.pages.index(page)} in {filename}")
-        i += 1
+                texts.append(text)
+                metadata.append({'url': url, 'title': title})
     return texts, metadata
 
-INDEXED= False
+INDEXED=True
 if __name__ == "__main__":
     logger.setLevel(logging.INFO)
     if INDEXED:
