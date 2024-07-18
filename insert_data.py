@@ -97,7 +97,7 @@ if __name__ == "__main__":
         logger.info(f"Connected to Milvus at {MILVUS_HOST}:{MILVUS_PORT}")
     else:
         logger.info(f"Indexing at {MILVUS_CONNECTION}")
-        index = index_documents(MILVUS_CONNECTION, SOURCE_FILE_NAMES, SOURCE_URLS, SOURCE_TITLES)
+        index = index(MILVUS_CONNECTION, SOURCE_FILE_NAMES, SOURCE_URLS, SOURCE_TITLES)
 
     query = "What is Data Mining?"
     try:
