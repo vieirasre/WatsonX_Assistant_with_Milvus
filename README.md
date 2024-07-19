@@ -123,8 +123,50 @@ python index-milvus-comentado.py
 ```
 
 
+### 8 - criação do usuario e senha no milvus
 
+```
+sudo snap install docker         # version 24.0.5, or
+sudo apt  install podman-docker  # version 3.4.4+ds1-1ubuntu1.22.04.2
+sudo apt  install docker.io      # version 24.0.7-0ubuntu2~22.04.1
+```
+Passo 1: Criar o Arquivo de Configuração
+Primeiro, você precisa criar o arquivo de configuração server_config.yaml no seu servidor virtual onde o Milvus está rodando.
 
+Conecte-se ao seu servidor virtual (parece que você já está conectado).
+
+Crie um novo arquivo de configuração. Você pode usar um editor de texto como nano ou vi. Por exemplo, para usar o nano:
+
+```sh
+nano ~/server_config.yaml
+```
+Cole o seguinte conteúdo no arquivo, ajustando a senha conforme necessário:
+
+```yaml
+version: 0.5
+
+system:
+  user:
+    root: "YourRootPassword"  # Substitua por sua senha
+  http:
+    enabled: true
+    port: 9091
+```
+
+Salve e feche o arquivo (Ctrl + O para salvar no nano, Ctrl + X para sair).
+
+Passo 2: Executar o Milvus com Docker
+Agora você precisa executar o Milvus com o Docker, montando o arquivo de configuração criado. Certifique-se de que o caminho para o arquivo de configuração está correto.
+
+No terminal do seu servidor, execute o comando Docker, substituindo ~/server_config.yaml pelo caminho para o seu arquivo de configuração:
+```
+sudo docker run -d --name milvus-standalone \
+  -p 19530:19530 \
+  -p 9091:9091 \
+  -v /home/ubutu/server_config.yaml:/milvus/configs/server_config.yaml \
+  --network milvus-network \
+  milvusdb/milvus:latest
+```
 
 
 
