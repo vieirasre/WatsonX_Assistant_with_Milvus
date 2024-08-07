@@ -53,12 +53,15 @@ def index(connection_info, filenames, urls, titles):
     logger.info("Starting indexing process")
     texts, metadata = load_docs_pdf(filenames, urls, titles)
     logger.info("Loaded documents from PDFs")
+    
     text_splitter = RecursiveCharacterTextSplitter(chunk_size=CHUNK_SIZE, chunk_overlap=CHUNK_OVERLAP)
     split_texts = text_splitter.create_documents(texts, metadata)
     logger.info("Documents chunked into smaller parts")
+    
     logger.info("Sending chunked documents to Milvus")
     index = Milvus.from_documents(documents=split_texts, embedding=EMBED, connection_args=connection_info, collection_name=INDEX_NAME)
     logger.info("Indexing completed")
+    
     return index
 
 def load_docs_pdf(filenames, urls, titles):
